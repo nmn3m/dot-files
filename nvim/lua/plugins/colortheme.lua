@@ -82,8 +82,8 @@ return {
 
       -- Available themes
       local themes = {
-        { name = 'gruvbox-material', transparent = true },
         { name = 'catppuccin-mocha', transparent = true },
+        { name = 'gruvbox-material', transparent = true },
         { name = 'tokyonight-night', transparent = true },
         { name = 'kanagawa-wave', transparent = true },
         { name = 'gruvbox', transparent = true },
