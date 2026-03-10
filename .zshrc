@@ -1,59 +1,52 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
+# If you come from bash you might have to change your $PATH.
+# export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+export ZSH="$HOME/.oh-my-zsh"
 
-# Set the directory we want to store zinit and plugins
-ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+ZSH_THEME="simple"
 
-# Download Zinit, if it's not there yet
-if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
-fi
+plugins=(
+    git
+    archlinux
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+    kubectl
+    rust
+    sudo
+    command-not-found
+    fzf-tab
+)
 
-# Source/Load zinit
-source "${ZINIT_HOME}/zinit.zsh"
+source $ZSH/oh-my-zsh.sh
 
-# Add in Powerlevel10k
-zinit ice depth=1; zinit light romkatv/powerlevel10k
+# Show only current directory name in prompt
+PROMPT='%(!.%{$fg[red]%}.%{$fg[green]%})%1~$(git_prompt_info)%{$reset_color%} '
 
-# Add in zsh plugins
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
-zinit light zsh-users/zsh-autosuggestions
-zinit light Aloxaf/fzf-tab
+# Check archlinux plugin commands here
+# https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/archlinux
 
-# Add in snippets
-zinit snippet OMZL::git.zsh
-zinit snippet OMZP::git
-zinit snippet OMZP::sudo
-zinit snippet OMZP::kubectl
-zinit snippet OMZP::rust
-zinit snippet OMZP::command-not-found
+# Display Pokemon-colorscripts
+# Project page: https://gitlab.com/phoneybadger/pokemon-colorscripts#on-other-distros-and-macos
+#pokemon-colorscripts --no-title -s -r #without fastfetch
+pokemon-colorscripts --no-title -s -r | fastfetch -c $HOME/.config/fastfetch/config-pokemon.jsonc --logo-type file-raw --logo-height 10 --logo-width 5 --logo -
 
-# Load completions
-autoload -Uz compinit && compinit
+# fastfetch. Will be disabled if above colorscript was chosen to install
+#fastfetch -c $HOME/.config/fastfetch/config-compact.jsonc
 
-zinit cdreplay -q
+# Set-up icons for files/directories in terminal using lsd
+alias ls='lsd'
+alias l='ls -l'
+alias la='ls -a'
+alias lla='ls -la'
+alias lt='ls --tree'
 
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-# Keybindings
-bindkey -e
-bindkey '^p' history-search-backward
-bindkey '^n' history-search-forward
-bindkey '^[w' kill-region
+# Set-up FZF key bindings (CTRL R for fuzzy history finder)
+source <(fzf --zsh)
 
 # History
-HISTSIZE=5000
 HISTFILE=~/.zsh_history
-SAVEHIST=$HISTSIZE
-HISTDUP=erase
+HISTSIZE=10000
+SAVEHIST=10000
 setopt appendhistory
 setopt sharehistory
 setopt hist_ignore_space
@@ -62,18 +55,32 @@ setopt hist_save_no_dups
 setopt hist_ignore_dups
 setopt hist_find_no_dups
 
+# Keybindings (vim-style history search)
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+
 # Completion styling
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 zstyle ':completion:*' menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
 zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
+export PATH=$PATH:$(go env GOPATH)/bin
 
-# Aliases
-alias ls='ls --color'
-alias vim='nvim'
-alias c='clear'
+# NVM configuration
+export NVM_DIR="$HOME/.nvm"
+source /usr/share/nvm/init-nvm.sh
 
-# Shell integrations
-# eval "$(fzf)"
+export PATH="$HOME/.cargo/bin:$PATH"
+
+## adding dotnet
+export DOTNET_ROOT=$HOME/.dotnet
+export PATH=$PATH:$DOTNET_ROOT:$DOTNET_ROOT/tools
+
+## adding etcd
+export PATH="${PATH}:/home/nour/workspace/github/opensource/kubernetes/third_party/etcd"
+
+export PATH="$HOME/.local/bin:$PATH"
+
+# Zoxide (smart cd - remembers your most visited directories)
 eval "$(zoxide init --cmd cd zsh)"
