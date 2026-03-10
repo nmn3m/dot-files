@@ -187,7 +187,8 @@ return {
 			sqlls = {},
 			terraformls = {},
 			jsonls = {},
-			yamlls = {},
+			-- yamlls is configured by yaml-companion.lua
+			-- yamlls = {},
 
 			lua_ls = {
 				-- cmd = {...},

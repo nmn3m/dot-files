@@ -13,25 +13,9 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Set up plugins
+-- Set up plugins (auto-imports all files from lua/plugins/)
 require("lazy").setup({
-	require("plugins.neotree"),
-	require("plugins.colortheme"),
-	require("plugins.bufferline"),
-	require("plugins.lualine"),
-	require("plugins.treesitter"),
-	require("plugins.telescope"),
-	require("plugins.lsp"),
-	require("plugins.autocompletion"),
-	require("plugins.none-ls"),
-	require("plugins.gitsigns"),
-	require("plugins.alpha"),
-	require("plugins.indent-blankline"),
-	require("plugins.misc"),
-	require("plugins.comment"),
-	require("plugins.avante"),
-	-- require("plugins.gitblame"),
+	{ import = "plugins" },
 })
-
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et

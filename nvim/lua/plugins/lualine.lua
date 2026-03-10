@@ -40,13 +40,13 @@ return {
 		require("lualine").setup({
 			options = {
 				icons_enabled = true,
-				theme = "nord", -- Set theme based on environment variable
+				theme = "auto", -- Automatically matches the active colorscheme
 				-- Some useful glyphs:
 				-- https://www.nerdfonts.com/cheat-sheet
 				--        
 				section_separators = { left = "", right = "" },
 				component_separators = { left = "", right = "" },
-				disabled_filetypes = { "alpha", "neo-tree" },
+				disabled_filetypes = { "neo-tree" },
 				always_divide_middle = true,
 			},
 			sections = {
@@ -71,7 +71,7 @@ return {
 				lualine_z = {},
 			},
 			tabline = {},
-			extensions = { "fugitive" },
+			extensions = {},
 		})
 	end,
 }
