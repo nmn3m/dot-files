@@ -1,6 +1,10 @@
 return {
 	"iamcco/markdown-preview.nvim",
 	cmd = { "MarkdownPreview", "MarkdownPreviewStop" },
+	keys = {
+		{ "<leader>mp", "<cmd>MarkdownPreview<CR>", ft = "markdown", desc = "Markdown Preview" },
+		{ "<leader>ms", "<cmd>MarkdownPreviewStop<CR>", ft = "markdown", desc = "Markdown Preview Stop" },
+	},
 	ft = { "markdown" },
 	build = function()
 		vim.fn["mkdp#util#install"]()

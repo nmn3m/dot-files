@@ -73,3 +73,11 @@ vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous dia
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnostic message' })
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
+
+-- Go test keymaps (runs in terminal buffer, cancel with Ctrl+c)
+vim.keymap.set('n', '<leader>tt', '<cmd>split | terminal go test ./...<CR>', { desc = 'Go: Run all tests' })
+vim.keymap.set('n', '<leader>tf', function()
+	local dir = vim.fn.expand('%:p:h')
+	vim.cmd('split | terminal cd ' .. dir .. ' && go test -v -run ' .. vim.fn.expand('%:t:r'))
+end, { desc = 'Go: Run tests in current file' })
+vim.keymap.set('n', '<leader>tc', '<cmd>split | terminal go test -v -count=1 ./...<CR>', { desc = 'Go: Run tests (no cache)' })

@@ -182,6 +182,39 @@
 
 ---
 
+## [nvim-dap](https://github.com/mfussenegger/nvim-dap) — Debugging (Go)
+
+> Debug Go code with Delve. Set breakpoints, step through code, inspect variables, and debug individual tests. Uses nvim-dap-go for Go-specific integration and nvim-dap-ui for a visual debug panel.
+
+| Key | Mode | Action |
+|---|---|---|
+| `<F5>` | n | Start / Continue |
+| `<F10>` | n | Step Over |
+| `<F11>` | n | Step Into |
+| `<F12>` | n | Step Out |
+| `<leader>db` | n | Toggle Breakpoint |
+| `<leader>dB` | n | Conditional Breakpoint |
+| `<leader>dl` | n | Log Point |
+| `<leader>dr` | n | Open REPL |
+| `<leader>dt` | n | Debug Go Test (under cursor) |
+| `<leader>du` | n | Toggle Debug UI |
+
+---
+
+## Go Testing
+
+> Quick keybindings to run Go tests without leaving the editor.
+
+| Key | Mode | Action |
+|---|---|---|
+| `<leader>tt` | n | Run all tests (`go test ./...`) |
+| `<leader>tf` | n | Run tests in current file (runs from file's directory) |
+| `<leader>tc` | n | Run tests without cache |
+
+Tests run in a split terminal buffer. Press `Ctrl+c` to cancel, `q` to close the split.
+
+---
+
 ## [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) — Autocompletion
 
 > Intelligent autocompletion with LSP, snippets, buffer words, and file paths. Uses LuaSnip for snippet expansion.
@@ -285,10 +318,10 @@ No keybindings — shows indent guides automatically with `▏` character.
 
 > Opens a live-updating markdown preview in your browser. Useful for writing docs, READMEs, and K8s documentation.
 
-| Key / Command | Action |
-|---|---|
-| `:MarkdownPreview` | Start preview in browser |
-| `:MarkdownPreviewStop` | Stop preview |
+| Key | Mode | Action |
+|---|---|---|
+| `<leader>mp` | n | Start preview in browser |
+| `<leader>ms` | n | Stop preview |
 
 ---
 
@@ -371,35 +404,6 @@ No keybindings — shows indent guides automatically with `▏` character.
 | `c0` | n | Choose none |
 | `]x` | n | Next conflict |
 | `[x` | n | Previous conflict |
-
----
-
-## [kubectl.nvim](https://github.com/ramilito/kubectl.nvim) — Kubernetes Management
-
-> Full kubectl integration inside nvim. View pods, deployments, services, logs, exec into containers — all without leaving the editor.
-
-| Key | Mode | Action |
-|---|---|---|
-| `<leader>k` | n | Toggle kubectl panel |
-
-### Inside Kubectl Panel
-
-| Key | Action |
-|---|---|
-| `1` | Pods view |
-| `2` | Deployments view |
-| `3` | Services view |
-| `4` | Ingresses view |
-| `5` | ConfigMaps view |
-| `6` | Secrets view |
-| `7` | Nodes view |
-| `d` | Describe resource |
-| `l` | View logs |
-| `e` | Edit resource |
-| `Ctrl+d` | Delete resource |
-| `g` | Refresh |
-| `R` | Change namespace |
-| `q` | Close panel |
 
 ---
 
