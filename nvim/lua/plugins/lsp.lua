@@ -139,7 +139,7 @@ return {
 		vim.api.nvim_create_autocmd("BufWritePre", {
 			pattern = "*.go",
 			callback = function()
-				local params = vim.lsp.util.make_range_params()
+				local params = vim.lsp.util.make_range_params(0, "utf-16")
 				params.context = { only = { "source.organizeImports" } }
 				local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 1000)
 				for _, res in pairs(result or {}) do
@@ -260,17 +260,13 @@ return {
 		})
 		require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-		require("mason-lspconfig").setup({
-			handlers = {
-				function(server_name)
-					local server = servers[server_name] or {}
-					-- This handles overriding only values explicitly passed
-					-- by the server configuration above. Useful when disabling
-					-- certain features of an LSP (for example, turning off formatting for tsserver)
-					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-					require("lspconfig")[server_name].setup(server)
-				end,
-			},
-		})
+		require("mason-lspconfig").setup()
+
+		-- Configure and enable LSP servers using the new vim.lsp.config API
+		for name, config in pairs(servers) do
+			config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, config.capabilities or {})
+			vim.lsp.config(name, config)
+		end
+		vim.lsp.enable(vim.tbl_keys(servers))
 	end,
 }
