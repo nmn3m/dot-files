@@ -5,6 +5,9 @@ export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="simple"
 
+# Prevent oh-my-zsh from overriding tmux window names
+DISABLE_AUTO_TITLE="true"
+
 plugins=(
     git
     archlinux
