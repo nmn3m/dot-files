@@ -218,8 +218,8 @@ return {
           },
         },
         follow_current_file = {
-          enabled = false, -- This will find and focus the file in the active buffer every time
-          --               -- the current file is changed while the tree is open.
+          enabled = true, -- This will find and focus the file in the active buffer every time
+          --              -- the current file is changed while the tree is open.
           leave_dirs_open = false, -- `false` closes auto expanded dirs, such as with `:Neotree reveal`
         },
         group_empty_dirs = false, -- when true, empty folders will be grouped together
