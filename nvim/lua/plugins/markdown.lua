@@ -1,35 +1,36 @@
 return {
-	"iamcco/markdown-preview.nvim",
-	cmd = { "MarkdownPreview", "MarkdownPreviewStop" },
-	keys = {
-		{ "<leader>mp", "<cmd>MarkdownPreview<CR>", ft = "markdown", desc = "Markdown Preview" },
-		{ "<leader>ms", "<cmd>MarkdownPreviewStop<CR>", ft = "markdown", desc = "Markdown Preview Stop" },
+	-- Render markdown inline inside Neovim (no browser needed)
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		ft = { "markdown" },
+		keys = {
+			{ "<leader>mp", "<cmd>RenderMarkdown toggle<CR>", ft = "markdown", desc = "Markdown Preview Toggle" },
+		},
+		opts = {},
 	},
-	ft = { "markdown" },
-	build = function()
-		vim.fn["mkdp#util#install"]()
-	end,
-	config = function()
-		vim.g.mkdp_auto_start = 0
-		vim.g.mkdp_auto_close = 1
-		vim.g.mkdp_refresh_slow = 0
-		vim.g.mkdp_command_for_global = 0
-		vim.g.mkdp_open_to_the_world = 0
-		vim.g.mkdp_browser = ""
-		vim.g.mkdp_echo_preview_url = 1
-		vim.g.mkdp_preview_options = {
-			mkit = {},
-			katex = {},
-			uml = {},
-			maid = {},
-			disable_sync_scroll = 0,
-			sync_scroll_type = "middle",
-			hide_yaml_meta = 1,
-			sequence_diagrams = {},
-			flowchart_diagrams = {},
-			content_editable = false,
-			disable_filename = 0,
-			toc = {},
-		}
-	end,
+
+	-- Browser-based preview (when you need full HTML rendering)
+	{
+		"iamcco/markdown-preview.nvim",
+		cmd = { "MarkdownPreview", "MarkdownPreviewStop" },
+		keys = {
+			{ "<leader>mb", "<cmd>MarkdownPreview<CR>", ft = "markdown", desc = "Markdown Preview (Browser)" },
+			{ "<leader>ms", "<cmd>MarkdownPreviewStop<CR>", ft = "markdown", desc = "Markdown Preview Stop" },
+		},
+		ft = { "markdown" },
+		build = function()
+			vim.fn["mkdp#util#install"]()
+		end,
+		config = function()
+			vim.g.mkdp_auto_start = 0
+			vim.g.mkdp_auto_close = 1
+			vim.g.mkdp_refresh_slow = 0
+			vim.g.mkdp_browser = ""
+			vim.g.mkdp_echo_preview_url = 1
+			vim.g.mkdp_preview_options = {
+				maid = {},
+			}
+		end,
+	},
 }
