@@ -79,7 +79,12 @@ install_packages() {
             pkg_install $common neovim gcc make go lsd zoxide fastfetch nodejs npm python kitty
             ;;
         debian)
-            pkg_install $common neovim gcc make golang-go nodejs npm python3 kitty
+            pkg_install $common neovim gcc make golang-go nodejs npm python3 kitty fd-find
+            # Debian ships fd as fdfind
+            if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
+                mkdir -p "$HOME/.local/bin"
+                ln -sf "$(command -v fdfind)" "$HOME/.local/bin/fd"
+            fi
             # lsd: available on Ubuntu 23.04+/Debian 12+, fallback to cargo
             if apt-cache show lsd &>/dev/null; then
                 pkg_install lsd
@@ -99,7 +104,7 @@ install_packages() {
                 if apt-cache show fastfetch &>/dev/null; then
                     pkg_install fastfetch
                 else
-                    warn "fastfetch not in repos, install manually"
+                    install_fastfetch_release
                 fi
             fi
             ;;
@@ -124,6 +129,82 @@ install_packages() {
     esac
 
     ok "Core packages installed"
+}
+
+# ── User-local Installs (no sudo) ───────────────────────────────
+release_arch() {
+    case "$(uname -m)" in
+        x86_64)        echo "x86_64" ;;
+        aarch64|arm64) echo "arm64" ;;
+        *)             err "Unsupported architecture: $(uname -m)" ;;
+    esac
+}
+
+install_fastfetch_release() {
+    local arch tmp
+    arch="$(release_arch)"
+    [ "$arch" = "x86_64" ] && arch="amd64" || arch="aarch64"
+    info "Installing fastfetch from GitHub release..."
+    tmp="$(mktemp -d)"
+    scurl "https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-$arch.tar.gz" | tar -xz -C "$tmp"
+    mkdir -p "$HOME/.local/bin"
+    install -m 755 "$tmp/fastfetch-linux-$arch/usr/bin/fastfetch" "$HOME/.local/bin/fastfetch"
+    rm -rf "$tmp"
+    ok "fastfetch installed to ~/.local/bin"
+}
+
+# Config uses vim.lsp.config/enable, which needs Neovim 0.11+
+install_neovim() {
+    local ver
+    ver="$(nvim --version 2>/dev/null | head -1 | sed -E 's/^NVIM v([0-9]+\.[0-9]+).*/\1/')"
+    if [ -n "$ver" ] && [ "$(printf '%s\n' 0.11 "$ver" | sort -V | head -1)" = "0.11" ]; then
+        ok "Neovim $ver is recent enough"
+        return
+    fi
+
+    local arch dest="$HOME/.local/opt/nvim"
+    arch="$(release_arch)"
+    info "Installing latest Neovim from GitHub release (system has ${ver:-none})..."
+    rm -rf "$dest"
+    mkdir -p "$dest" "$HOME/.local/bin"
+    scurl "https://github.com/neovim/neovim/releases/latest/download/nvim-linux-$arch.tar.gz" \
+        | tar -xz -C "$dest" --strip-components=1
+    ln -sf "$dest/bin/nvim" "$HOME/.local/bin/nvim"
+    ok "Neovim $("$dest/bin/nvim" --version | head -1) installed to ~/.local/bin"
+}
+
+# nvim-treesitter (main branch) builds parsers with the tree-sitter CLI
+install_tree_sitter_cli() {
+    if command -v tree-sitter &>/dev/null; then
+        ok "tree-sitter CLI already installed"
+        return
+    fi
+    local arch
+    arch="$(release_arch)"
+    [ "$arch" = "x86_64" ] && arch="x64"
+    info "Installing tree-sitter CLI from GitHub release..."
+    mkdir -p "$HOME/.local/bin"
+    scurl "https://github.com/tree-sitter/tree-sitter/releases/latest/download/tree-sitter-linux-$arch.gz" \
+        | gunzip > "$HOME/.local/bin/tree-sitter"
+    chmod 755 "$HOME/.local/bin/tree-sitter"
+    ok "tree-sitter CLI installed to ~/.local/bin"
+}
+
+install_nerd_font() {
+    if fc-list | grep -qi "FantasqueSansM Nerd Font"; then
+        ok "FantasqueSansM Nerd Font already installed"
+        return
+    fi
+    local dir="$HOME/.local/share/fonts/FantasqueSansMono"
+    info "Installing FantasqueSansM Nerd Font..."
+    mkdir -p "$dir"
+    local tmp
+    tmp="$(mktemp -d)"
+    scurl -o "$tmp/font.zip" "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/FantasqueSansMono.zip"
+    unzip -oq "$tmp/font.zip" -d "$dir"
+    rm -rf "$tmp"
+    fc-cache -f "$dir" >/dev/null
+    ok "Nerd Font installed"
 }
 
 # ── Install Oh-My-Zsh + Plugins ─────────────────────────────────
@@ -232,6 +313,9 @@ main() {
 
     detect_distro
     install_packages
+    install_neovim
+    install_tree_sitter_cli
+    install_nerd_font
     install_ohmyzsh
     install_tpm
     install_nvm
